@@ -1,3 +1,4 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -5,7 +6,7 @@ import time
 import unittest
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
 
@@ -20,12 +21,13 @@ class NewVisitorTest(unittest.TestCase):
         rows = table.find_elements_by_tag_name('tr')
 
         self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_a_list_and_retrieve_it_later(self):
 
         # Edith has heard about a new online to-do app. She goes
         # to checkout its homepage
 
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # She notices the page's header and title mention to-do lists
 
@@ -50,8 +52,6 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = self.browser.find_elements_by_tag_name('tr')
         self.check_for_row_in_list_table('1: Buy peacock feathers')
 
         # There is still a text box inviting her to add another item. She
@@ -63,8 +63,6 @@ class NewVisitorTest(unittest.TestCase):
 
         # The page updates again, and now it shows both items on her list.
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = self.browser.find_elements_by_tag_name('tr')
         self.check_for_row_in_list_table('1: Buy peacock feathers')
         self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
@@ -77,7 +75,3 @@ class NewVisitorTest(unittest.TestCase):
         # She visits the URL - her list is still there
 
         # Satisfied, she goes back to sleep.
-
-if __name__ == "__main__":
-
-    unittest.main()
